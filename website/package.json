@@ -1,0 +1,12 @@
+{
+  "name": "steffi-metz-website",
+  "version": "1.0.0",
+  "description": "Static website for Steffi Metz - Handmade Healthy Cuisines",
+  "scripts": {
+    "build": "tailwindcss -i ./src/input.css -o ./dist/styles.css --minify",
+    "watch": "tailwindcss -i ./src/input.css -o ./dist/styles.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
+  }
+}

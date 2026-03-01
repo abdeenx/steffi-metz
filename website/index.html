@@ -44,6 +44,24 @@
             font-family: 'Poppins', sans-serif;
             background-color: #e8e8e3;
         }
+        
+        /* Password Modal */
+        .password-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(51, 51, 46, 0.95), rgba(77, 77, 66, 0.95));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+        .password-modal.hidden {
+            display: none;
+        }
+        
         .font-display {
             font-family: 'Playfair Display', serif;
         }
@@ -81,6 +99,51 @@
                 radial-gradient(ellipse at 80% 10%, rgba(34, 139, 34, 0.1) 0%, transparent 40%),
                 radial-gradient(ellipse at 20% 90%, rgba(34, 139, 34, 0.1) 0%, transparent 40%);
             pointer-events: none;
+        }
+        
+        /* Hero slides transition */
+        .hero-slide {
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-out;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .hero-slide.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+        
+        /* Hero slides container */
+        #heroSlides {
+            position: relative;
+            min-height: 300px;
+        }
+        
+        /* Hero section background transition */
+        #home {
+            transition: background-image 0.8s ease-in-out;
+        }
+        
+        /* Hero slides transition */
+        .hero-slide {
+            transition: opacity 0.8s ease-in-out, transform 0.8s ease-out;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .hero-slide.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
         }
         
         /* Card styling */
@@ -126,18 +189,6 @@
             color: white;
         }
         
-        /* Slider arrows */
-        .slider-arrow {
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.5);
-            color: white;
-            transition: all 0.3s ease;
-        }
-        .slider-arrow:hover {
-            background: rgba(255,255,255,0.4);
-            border-color: white;
-        }
-        
         /* Footer */
         .footer-bg {
             background-color: #4d4d42;
@@ -153,6 +204,34 @@
     </style>
 </head>
 <body class="text-gray-800">
+    <!-- Password Protection Modal -->
+    <div id="passwordModal" class="password-modal">
+        <div class="bg-white rounded-sm shadow-2xl p-8 max-w-md w-full mx-4">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 mx-auto bg-brand-red rounded-full flex items-center justify-center mb-4">
+                    <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13h2v6h-2zm0 8h2v2h-2z"/>
+                    </svg>
+                </div>
+                <h2 class="font-display text-2xl font-bold text-olive-800">Password Protected</h2>
+                <p class="text-gray-600 mt-2">Enter the password to view this website</p>
+            </div>
+            <form id="passwordForm" class="space-y-4">
+                <div>
+                    <input type="password" id="passwordInput" 
+                           placeholder="Enter password" 
+                           class="w-full px-4 py-3 rounded-sm border border-gray-300 focus:border-brand-red focus:ring-2 focus:ring-brand-red/20 outline-none transition-all">
+                </div>
+                <p id="passwordError" class="text-red-600 text-sm hidden">Incorrect password. Please try again.</p>
+                <button type="submit" class="btn-red w-full py-3 rounded-sm font-semibold">
+                    Enter
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Main Content (hidden until password correct) -->
+    <div id="mainContent" class="hidden">
     <!-- Top Header with Logo -->
     <header class="bg-white py-4 border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -200,29 +279,42 @@
     </nav>
 
     <!-- Hero Section -->
-    <section id="home" class="hero-bg relative min-h-[600px] flex items-center justify-center">
-        <div class="botanical-overlay"></div>
+    <section id="home" class="relative min-h-[600px] flex items-center justify-center overflow-hidden">
+        <!-- Dual background layers for cross-fade -->
+        <div id="bgLayer1" class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1920&h=1080&fit=crop'); opacity: 1;"></div>
+        <div id="bgLayer2" class="absolute inset-0 bg-cover bg-center transition-opacity duration-1000 ease-in-out" style="background-image: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1920&h=1080&fit=crop'); opacity: 0;"></div>
         
-        <!-- Slider Arrows -->
-        <button class="slider-arrow absolute left-4 md:left-8 w-12 h-12 rounded-full flex items-center justify-center z-20">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-            </svg>
-        </button>
-        <button class="slider-arrow absolute right-4 md:right-8 w-12 h-12 rounded-full flex items-center justify-center z-20">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
-            </svg>
-        </button>
+        <div id="botanicalOverlay" class="botanical-overlay"></div>
         
         <!-- Hero Content -->
-        <div class="relative z-10 text-center px-4 max-w-4xl mx-auto">
-            <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-wide">
-                HANDMADE HEALTHY CUISINES
-            </h1>
-            <p class="text-xl md:text-2xl text-white/90 font-light mb-8">
-                Experience the finest flavors from around the world
-            </p>
+        <div id="heroSlides" class="relative z-10 text-center px-4 max-w-4xl mx-auto">
+            <!-- Slide 1 -->
+            <div class="hero-slide" data-index="0" data-bg="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1920&h=1080&fit=crop">
+                <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-wide">
+                    HANDMADE HEALTHY CUISINES
+                </h1>
+                <p class="text-xl md:text-2xl text-white/90 font-light mb-8">
+                    Experience the finest flavors from around the world
+                </p>
+            </div>
+            <!-- Slide 2 -->
+            <div class="hero-slide hidden" data-index="1" data-bg="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1920&h=1080&fit=crop">
+                <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-wide">
+                    LOCALLY SOURCED ORGANIC INGREDIENTS
+                </h1>
+                <p class="text-xl md:text-2xl text-white/90 font-light mb-8">
+                    Supporting Rwandan farmers and sustainable practices
+                </p>
+            </div>
+            <!-- Slide 3 -->
+            <div class="hero-slide hidden" data-index="2" data-bg="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1920&h=1080&fit=crop">
+                <h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 tracking-wide">
+                    COOKING CLASSES & EVENTS
+                </h1>
+                <p class="text-xl md:text-2xl text-white/90 font-light mb-8">
+                    Learn culinary skills and host your next event with us
+                </p>
+            </div>
         </div>
     </section>
 
@@ -236,7 +328,7 @@
                         <h3 class="font-display text-lg font-semibold tracking-wide">OUR STORY</h3>
                     </div>
                     <div class="h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop" 
+                        <img src="./gluten-free-bread.jpg" 
                              alt="Healthy salad" 
                              class="w-full h-full object-cover">
                     </div>
@@ -244,9 +336,9 @@
                         <p class="text-gray-600 text-sm mb-4 leading-relaxed">
                             Where Rwandan warmth meets global flavors. Handmade with love using locally-sourced organic ingredients.
                         </p>
-                        <button class="btn-red px-6 py-2 rounded-sm text-sm font-medium">
+                        <a href="#about" class="btn-red px-6 py-2 rounded-sm text-sm font-medium">
                             Learn More
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -256,17 +348,17 @@
                         <h3 class="font-display text-lg font-semibold tracking-wide">OUR MENU</h3>
                     </div>
                     <div class="h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop" 
-                             alt="Rwandan Harvest Bowl" 
+                        <img src="./choco-bread.jpg" 
+                             alt="Chocolate Bread" 
                              class="w-full h-full object-cover">
                     </div>
                     <div class="p-4 text-center">
                         <p class="text-gray-600 text-sm mb-4 leading-relaxed">
                             Discover our signature dishes crafted with traditional techniques and the freshest ingredients.
                         </p>
-                        <button class="btn-red px-6 py-2 rounded-sm text-sm font-medium">
+                        <a href="#menu" class="btn-red px-6 py-2 rounded-sm text-sm font-medium">
                             View Menu
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -284,9 +376,9 @@
                         <p class="text-gray-600 text-sm mb-4 leading-relaxed">
                             Take a visual journey through our culinary creations and dining experience.
                         </p>
-                        <button class="btn-red px-6 py-2 rounded-sm text-sm font-medium">
+                        <a href="#gallery" class="btn-red px-6 py-2 rounded-sm text-sm font-medium">
                             View Gallery
-                        </button>
+                        </a>
                     </div>
                 </div>
 
@@ -296,7 +388,7 @@
                         <h3 class="font-display text-lg font-semibold tracking-wide">ORDER NOW</h3>
                     </div>
                     <div class="h-48 overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop" 
+                        <img src="./hp.jpg" 
                              alt="Gourmet dish" 
                              class="w-full h-full object-cover">
                     </div>
@@ -304,9 +396,9 @@
                         <p class="text-gray-600 text-sm mb-4 leading-relaxed">
                             Ready to taste our handmade healthy cuisines? Order online or book a table today.
                         </p>
-                        <button class="btn-red px-6 py-2 rounded-sm text-sm font-medium">
+                        <a href="#contact" class="btn-red px-6 py-2 rounded-sm text-sm font-medium">
                             Order Now
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -403,16 +495,16 @@
                 <!-- Menu Item 1 -->
                 <div class="service-card bg-white rounded-sm overflow-hidden shadow-lg border border-gray-200">
                     <div class="relative h-56">
-                        <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=400&fit=crop" 
-                             alt="Rwandan Harvest Bowl" 
+                        <img src="./choco-bread.jpg" 
+                             alt="Chocolate Bread" 
                              class="w-full h-full object-cover">
                         <div class="absolute top-4 right-4 bg-brand-red text-white px-4 py-1 rounded-sm text-sm font-medium">
                             Signature
                         </div>
                     </div>
                     <div class="p-6">
-                        <h3 class="font-display text-xl font-bold text-olive-800 mb-2">Rwandan Harvest Bowl</h3>
-                        <p class="text-gray-600 text-sm mb-4">Sorghum grains, black beans, roasted sweet potatoes, fresh avocado, and our house-made sesame sauce.</p>
+                        <h3 class="font-display text-xl font-bold text-olive-800 mb-2">Chocolate Bread</h3>
+                        <p class="text-gray-600 text-sm mb-4">Indulge in our Chocolate Bread soft, fluffy, and filled with rich, melty chocolate for the perfect sweet treat any time of day.</p>
                         <div class="flex items-center justify-between">
                             <span class="text-2xl font-bold text-brand-red">RWF 8,500</span>
                             <button class="btn-red px-4 py-2 rounded-sm text-sm font-medium">
@@ -425,13 +517,13 @@
                 <!-- Menu Item 2 -->
                 <div class="service-card bg-white rounded-sm overflow-hidden shadow-lg border border-gray-200">
                     <div class="relative h-56">
-                        <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=600&h=400&fit=crop" 
-                             alt="Mediterranean Quinoa" 
+                        <img src="./gluten-free-bread.jpg" 
+                             alt="Gluten free Bread" 
                              class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <h3 class="font-display text-xl font-bold text-olive-800 mb-2">Mediterranean Quinoa</h3>
-                        <p class="text-gray-600 text-sm mb-4">Organic quinoa, roasted vegetables, feta cheese, olives, and lemon-herb dressing.</p>
+                        <h3 class="font-display text-xl font-bold text-olive-800 mb-2">Gluten free Bread</h3>
+                        <p class="text-gray-600 text-sm mb-4">Our freshly baked gluten-free bread is soft, flavorful, and made with wholesome ingredients. Perfect for a healthy start to your day or a delicious addition to any meal.</p>
                         <div class="flex items-center justify-between">
                             <span class="text-2xl font-bold text-brand-red">RWF 7,500</span>
                             <button class="btn-red px-4 py-2 rounded-sm text-sm font-medium">
@@ -444,13 +536,14 @@
                 <!-- Menu Item 3 -->
                 <div class="service-card bg-white rounded-sm overflow-hidden shadow-lg border border-gray-200">
                     <div class="relative h-56">
-                        <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=600&h=400&fit=crop" 
-                             alt="Asian Zen Salad" 
+                        <img src="./dukkah.jpg" 
+                             alt="Dukkah" 
                              class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <h3 class="font-display text-xl font-bold text-olive-800 mb-2">Asian Zen Salad</h3>
-                        <p class="text-gray-600 text-sm mb-4">Napa cabbage, edamame, mandarin oranges, crispy wontons, and ginger-soy dressing.</p>
+                        <h3 class="font-display text-xl font-bold text-olive-800 mb-2">Dukkah</h3>
+                        <p class="text-gray-600 text-sm mb-4">Nut seasoning mix.
+Perfect for that special kick for your dishes.</p>
                         <div class="flex items-center justify-between">
                             <span class="text-2xl font-bold text-brand-red">RWF 6,500</span>
                             <button class="btn-red px-4 py-2 rounded-sm text-sm font-medium">
@@ -463,7 +556,7 @@
                 <!-- Menu Item 4 -->
                 <div class="service-card bg-white rounded-sm overflow-hidden shadow-lg border border-gray-200">
                     <div class="relative h-56">
-                        <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=600&h=400&fit=crop" 
+                        <img src="./hp.jpg" 
                              alt="Imex Burger" 
                              class="w-full h-full object-cover">
                         <div class="absolute top-4 right-4 bg-olive-700 text-white px-4 py-1 rounded-sm text-sm font-medium">
@@ -471,8 +564,8 @@
                         </div>
                     </div>
                     <div class="p-6">
-                        <h3 class="font-display text-xl font-bold text-olive-800 mb-2">Imex Veggie Burger</h3>
-                        <p class="text-gray-600 text-sm mb-4">House-made bean patty, fresh vegetables, avocado, and tamarind aioli on artisan bread.</p>
+                        <h3 class="font-display text-xl font-bold text-olive-800 mb-2">Handmade Praline</h3>
+                        <p class="text-gray-600 text-sm mb-4">Hand Made praline made with much passion and love.</p>
                         <div class="flex items-center justify-between">
                             <span class="text-2xl font-bold text-brand-red">RWF 9,500</span>
                             <button class="btn-red px-4 py-2 rounded-sm text-sm font-medium">
@@ -485,13 +578,13 @@
                 <!-- Menu Item 5 -->
                 <div class="service-card bg-white rounded-sm overflow-hidden shadow-lg border border-gray-200">
                     <div class="relative h-56">
-                        <img src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=600&h=400&fit=crop" 
-                             alt="Moroccan Couscous" 
+                        <img src="./bf.jpg" 
+                             alt="Bread Fingers" 
                              class="w-full h-full object-cover">
                     </div>
                     <div class="p-6">
-                        <h3 class="font-display text-xl font-bold text-olive-800 mb-2">Moroccan Couscous</h3>
-                        <p class="text-gray-600 text-sm mb-4">Traditional couscous with roasted vegetables, chickpeas, and aromatic spices.</p>
+                        <h3 class="font-display text-xl font-bold text-olive-800 mb-2">Bread Fingers</h3>
+                        <p class="text-gray-600 text-sm mb-4">Baked in Olivenöl with fresh Herbs and Garlic.</p>
                         <div class="flex items-center justify-between">
                             <span class="text-2xl font-bold text-brand-red">RWF 8,000</span>
                             <button class="btn-red px-4 py-2 rounded-sm text-sm font-medium">
@@ -504,7 +597,7 @@
                 <!-- Menu Item 6 -->
                 <div class="service-card bg-white rounded-sm overflow-hidden shadow-lg border border-gray-200">
                     <div class="relative h-56">
-                        <img src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=400&fit=crop" 
+                        <img src="./hd.jpg" 
                              alt="Fresh Smoothie Bowl" 
                              class="w-full h-full object-cover">
                         <div class="absolute top-4 right-4 bg-olive-600 text-white px-4 py-1 rounded-sm text-sm font-medium">
@@ -512,8 +605,13 @@
                         </div>
                     </div>
                     <div class="p-6">
-                        <h3 class="font-display text-xl font-bold text-olive-800 mb-2">Tropical Smoothie Bowl</h3>
-                        <p class="text-gray-600 text-sm mb-4">Acai, banana, mango, coconut milk, topped with fresh fruits and granola.</p>
+                        <h3 class="font-display text-xl font-bold text-olive-800 mb-2">Homemade Dressings</h3>
+                        <p class="text-gray-600 text-sm mb-4">Lemon Basil,
+Honey Mustard,
+Ginger Soya,
+Avocado Lemon,
+Mint Joghurt
+choose yours</p>
                         <div class="flex items-center justify-between">
                             <span class="text-2xl font-bold text-brand-red">RWF 6,000</span>
                             <button class="btn-red px-4 py-2 rounded-sm text-sm font-medium">
@@ -591,7 +689,7 @@
                             </div>
                             <div>
                                 <h3 class="font-semibold text-lg text-olive-800">Location</h3>
-                                <p class="text-gray-600">Kigali, Rwanda</p>
+                                <p class="text-gray-600">161 KG 9 Ave, Kigali, Rwanda</p>
                             </div>
                         </div>
                         <div class="flex items-start space-x-4">
@@ -602,7 +700,7 @@
                             </div>
                             <div>
                                 <h3 class="font-semibold text-lg text-olive-800">Phone</h3>
-                                <p class="text-gray-600">+250 788 000 000</p>
+                                <p class="text-gray-600">+250 785 211 051</p>
                             </div>
                         </div>
                         <div class="flex items-start space-x-4">
@@ -613,7 +711,8 @@
                             </div>
                             <div>
                                 <h3 class="font-semibold text-lg text-olive-800">Opening Hours</h3>
-                                <p class="text-gray-600">Mon - Sun: 7:00 AM - 10:00 PM</p>
+                                <p class="text-gray-600">Mon - Fri: 10:00 AM - 8:00 PM</p>
+                                <p class="text-gray-600">Sat - Sun: 10:00 AM - 5:00 PM</p>
                             </div>
                         </div>
                     </div>
@@ -669,8 +768,8 @@
                         </div>
                     </div>
                     <p class="text-white/70 text-sm">
-                        Kigali, Rwanda<br>
-                        +250 788 000 000
+                        161 KG 9 Ave, Kigali, Rwanda<br>
+                        +250 785 211 051
                     </p>
                 </div>
                 
@@ -709,6 +808,9 @@
         </div>
     </footer>
 
+    <!-- Closing div for password-protected content -->
+    </div>
+
     <script>
         // Smooth scroll for anchor links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -722,6 +824,114 @@
                     });
                 }
             });
+        });
+        
+        // Slider functionality with cross-fade and auto-rotation
+        const heroSlides = document.querySelectorAll('.hero-slide');
+        const bgLayer1 = document.getElementById('bgLayer1');
+        const bgLayer2 = document.getElementById('bgLayer2');
+        let currentSlide = 0;
+        let activeLayer = 1; // 1 or 2
+        let isAnimating = false;
+        
+        // Preload images for smoother transitions
+        const slideImages = [
+            'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1920&h=1080&fit=crop',
+            'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1920&h=1080&fit=crop',
+            'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=1920&h=1080&fit=crop'
+        ];
+        
+        slideImages.forEach(url => {
+            const img = new Image();
+            img.src = url;
+        });
+        
+        function crossFadeBackground(newImageUrl) {
+            if (isAnimating) return;
+            isAnimating = true;
+            
+            const activeEl = activeLayer === 1 ? bgLayer1 : bgLayer2;
+            const inactiveEl = activeLayer === 1 ? bgLayer2 : bgLayer1;
+            
+            // Set new image on inactive layer
+            inactiveEl.style.backgroundImage = `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url('${newImageUrl}')`;
+            
+            // Small delay to ensure image is loaded before fading
+            requestAnimationFrame(() => {
+                // Fade out active, fade in inactive
+                activeEl.style.opacity = '0';
+                inactiveEl.style.opacity = '1';
+                
+                // Swap active layer
+                activeLayer = activeLayer === 1 ? 2 : 1;
+                
+                // Reset flag after animation
+                setTimeout(() => {
+                    isAnimating = false;
+                }, 1000);
+            });
+        }
+        
+        function showSlide(index) {
+            heroSlides.forEach((slide, i) => {
+                slide.classList.add('hidden');
+            });
+            heroSlides[index].classList.remove('hidden');
+            
+            // Cross-fade background
+            const bgUrl = heroSlides[index].getAttribute('data-bg');
+            if (bgUrl) {
+                crossFadeBackground(bgUrl);
+            }
+        }
+        
+        function nextSlide() {
+            currentSlide = (currentSlide + 1) % heroSlides.length;
+            showSlide(currentSlide);
+        }
+        
+        // Auto-rotate slides every 5 seconds
+        setInterval(nextSlide, 5000);
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+        
+        // Password Protection
+        const correctPassword = 'greatfood';
+        const modal = document.getElementById('passwordModal');
+        const mainContent = document.getElementById('mainContent');
+        const form = document.getElementById('passwordForm');
+        const input = document.getElementById('passwordInput');
+        const error = document.getElementById('passwordError');
+        
+        // Check if already authenticated
+        if (sessionStorage.getItem('authenticated') === 'true') {
+            modal.classList.add('hidden');
+            mainContent.classList.remove('hidden');
+        }
+        
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (input.value === correctPassword) {
+                sessionStorage.setItem('authenticated', 'true');
+                modal.classList.add('hidden');
+                mainContent.classList.remove('hidden');
+            } else {
+                error.classList.remove('hidden');
+                input.value = '';
+                input.focus();
+            }
         });
     </script>
 </body>
